@@ -12,6 +12,7 @@ distinct_vals = pd.read_sql("SELECT DISTINCT * FROM Fires", con)
 print(distinct_vals)
 del(distinct_vals)
 
+
 """
 format:
 COLUMN WORTH
@@ -118,21 +119,26 @@ Important Columns:
             Answer
 """
 
+
 important = pd.read_sql("SELECT SOURCE_SYSTEM_TYPE, SOURCE_SYSTEM, NWCG_REPORTING_AGENCY, NWCG_REPORTING_UNIT_NAME, FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, LATITUDE, LONGITUDE, STATE, COUNTY, FIPS_CODE, FIPS_NAME FROM Fires", con)
 print(important.head())
 del(important)
+
 
 location_data = pd.read_sql("SELECT LATITUDE, LONGITUDE, STATE, COUNTY, FIPS_CODE, FIPS_NAME FROM Fires", con)
 print(location_data.head())
 del(location_data)
 
+
 fire_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS FROM Fires", con)
 print(fire_data.head())
 del(fire_data)
 
+
 report_data = pd.read_sql("SELECT SOURCE_SYSTEM_TYPE, SOURCE_SYSTEM, NWCG_REPORTING_AGENCY, NWCG_REPORTING_UNIT_NAME FROM Fires", con)
 print(report_data.head())
 del(report_data)
+
 
 # TODO Chart stats for original data
 
