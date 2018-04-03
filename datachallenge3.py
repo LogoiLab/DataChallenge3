@@ -11,7 +11,7 @@ if os.path.isfile(fname):
     print("data found. not downloading.")
 else:
     print("data not found. downloading.")
-    url = "https://nofile.io/f/8TwOWYnwGwW/FPA_FOD_20170508.sqlite"
+    url = "https://nofile.io/g/eTXaMMnDOjWfiECxiNW4LjyR43L7o33vAhikYoD8zdkeXzagup2yHUgrKnwltS0S/FPA_FOD_20170508.sqlite/"
     urllib.request.urlretrieve(url, filename=fname)
     print ("download complete!")
 
