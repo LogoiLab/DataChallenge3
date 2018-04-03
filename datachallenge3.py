@@ -133,3 +133,21 @@ del(fire_data)
 report_data = pd.read_sql("SELECT SOURCE_SYSTEM_TYPE, SOURCE_SYSTEM, NWCG_REPORTING_AGENCY, NWCG_REPORTING_UNIT_NAME FROM Fires", con)
 print(report_data.head())
 del(report_data)
+
+# TODO Chart stats for original data
+
+# TODO One-hot encode
+
+# TODO Perform train and test split
+
+# TODO Train the naive-bayes
+
+# TODO Test the naive-bayes
+
+# TODO Tensorflow softmax train
+
+# TODO Tensorflow softmax test
+
+# TODO Chart train accuracy NB versus SM
+
+# TODO Chart test accuracy NB versus SM
