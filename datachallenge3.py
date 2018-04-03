@@ -151,6 +151,15 @@ print(report_data.head())  # Show
 del(report_data)  # Clear memory
 
 
+# Get required fields
+required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, FIPS_NAME FROM Fires", con)  # Query
+print(required_data.head())  # Show
+# KEEP THIS DATA
+
+# TODO Clean data
+
+# TODO Convert dates to durations
+
 # TODO Chart stats for original data
 
 # TODO One-hot encode
