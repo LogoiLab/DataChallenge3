@@ -168,21 +168,38 @@ Important Columns:
 # Get required fields
 required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, FIPS_NAME FROM Fires", con)  # Query
 print(required_data.head())  # Show
-del(required_data)  # KEEP THIS DATA IN FINAL VERSION
 
 # TODO Clean data
 
-# TODO Convert dates to durations
+# Shows null counts
+#print(required_data.DISCOVERY_DOY.isnull().value_counts())
+#print(required_data.DISCOVERY_TIME.isnull().value_counts())
+#print(required_data.CONT_DOY.isnull().value_counts())
+#print(required_data.CONT_TIME.isnull().value_counts())
+#print(required_data.FIRE_SIZE.isnull().value_counts())
+#print(required_data.FIRE_SIZE_CLASS.isnull().value_counts())
+#print(required_data.STATE.isnull().value_counts())
+#print(required_data.COUNTY.isnull().value_counts())
+#print(required_data.FIPS_CODE.isnull().value_counts())
+#print(required_data.FIPS_NAME.isnull().value_counts())
+#county, fips_code, fips_name all have the same number of nulls 678148, suspect these are not rows we want
+#discovery_time, cont_doy, cont_time are all 50% nulls
+#The rest of the columns have 0 nulls
 
+required_data['FIPS_CODE'] = required_data['FIPS_CODE'].where(required_data['FIPS_CODE'] == '40', '040')
+
+# TODO Convert dates to durations (num days)
+
+del(required_data)  # KEEP THIS DATA IN FINAL VERSION
 # TODO Chart stats for original data
 
 # Create size/year chart
 year_size = pd.read_sql("SELECT FIRE_YEAR, FIRE_SIZE FROM Fires", con)  # Query
-sns.regplot(x='FIRE_YEAR', y='FIRE_SIZE', data=year_size)  # Create chart
-plt.title('Fires/Year Sizes')
-plt.xlabel('Years')
-plt.ylabel('Fire sizes')
-plt.show()
+#sns.regplot(x='FIRE_YEAR', y='FIRE_SIZE', data=year_size)  # Create chart
+#plt.title('Fires/Year Sizes')
+#plt.xlabel('Years')
+#plt.ylabel('Fire sizes')
+#plt.show()
 del(year_size) # Clear memory
 
 # TODO One-hot encode
@@ -192,6 +209,8 @@ del(year_size) # Clear memory
 # TODO Train the naive-bayes
 
 # TODO Test the naive-bayes
+
+
 
 # TODO Tensorflow softmax train
 
