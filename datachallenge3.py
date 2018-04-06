@@ -18,10 +18,7 @@ else:
 
 #Establish database connection
 con = sqlite3.connect(fname)
-cr = con.cursor()
-
-#Clean database
-cr.execute("DELETE FROM Fires WHERE CONT_DATE IS NULL;")
+#cr = con.cursor()
 
 # Get all column names for table Fires
 #names = pd.read_sql("PRAGMA table_info(Fires)", con)  # Query
@@ -179,7 +176,7 @@ required_data.dropna()
 # TODO Clean data
 
 # Shows null counts
-#print(required_data.CONT_DATE.isnull().value_counts())
+print(required_data.CONT_DATE.isnull().value_counts())
 #print(required_data.DISCOVERY_DATE.isnull().value_counts())
 #print(required_data.DISCOVERY_DOY.isnull().value_counts())
 #print(required_data.DISCOVERY_TIME.isnull().value_counts())
