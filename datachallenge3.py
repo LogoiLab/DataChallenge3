@@ -18,9 +18,10 @@ else:
 
 #Establish database connection
 con = sqlite3.connect(fname)
+cr = con.cursor()
 
 #Clean database
-pd.read_sql("DELETE FROM Fires WHERE CONT_DATE IS NULL;", con)
+cr.execute("DELETE FROM Fires WHERE CONT_DATE IS NULL;")
 
 # Get all column names for table Fires
 #names = pd.read_sql("PRAGMA table_info(Fires)", con)  # Query
