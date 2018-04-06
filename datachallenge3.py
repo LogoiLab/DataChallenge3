@@ -206,12 +206,11 @@ print(required_data['DUR_FIRE'])
 # TODO Chart stats for original data
 
 # Create size/year chart
-#year_size = pd.read_sql("SELECT FIRE_YEAR, FIRE_SIZE FROM Fires", con)  # Query
-#sns.regplot(x='FIRE_YEAR', y='FIRE_SIZE', data=year_size)  # Create chart
-#plt.title('Fires/Year Sizes')
-#plt.xlabel('Years')
-#plt.ylabel('Fire sizes')
-#plt.show()
+sns.regplot(x='DUR_FIRE', y='FIRE_SIZE', data=required_data)  # Create chart
+plt.title('Fires Sizes / Duration')
+plt.xlabel('Duration')
+plt.ylabel('Fire sizes')
+plt.show()
 #del(year_size) # Clear memory
 
 # TODO One-hot encode
