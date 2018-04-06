@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import urllib
 import os.path
+import datetime
 
 fname = './res/Data/FPA_FOD_20170508.sqlite'
 if os.path.isfile(fname):
@@ -17,6 +18,9 @@ else:
 
 #Establish database connection
 con = sqlite3.connect(fname)
+
+#Clean database
+pd.read_sql("DELETE FROM Fires WHERE CONT_DATE IS NULL;", con)
 
 # Get all column names for table Fires
 #names = pd.read_sql("PRAGMA table_info(Fires)", con)  # Query
@@ -166,8 +170,9 @@ Important Columns:
 
 
 # Get required fields
-required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, FIPS_CODE FROM Fires", con)  # Query
-print(required_data.head())  # Show
+required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, FIPS_NAME FROM Fires", con)  # Query
+required_data.dropna()
+#print(required_data.head())  # Show
 
 # TODO Clean data
 
@@ -186,21 +191,23 @@ print(required_data.head())  # Show
 #discovery_time, cont_doy, cont_time are all 50% nulls
 #The rest of the columns have 0 nulls
 
-required_data['FIPS_CODE'] = required_data['FIPS_CODE'].where(required_data['FIPS_CODE'] == '40', '040')
+#required_data['FIPS_CODE'] = required_data['FIPS_CODE'].where(required_data['FIPS_CODE'] == '40', '040')
 
 # TODO Convert dates to durations (num days)
+required_data['DUR_FIRE'] = required_data['CONT_DATE'] - required_data['DISCOVERY_DATE']
+print(required_data['DUR_FIRE'])
 
-del(required_data)  # KEEP THIS DATA IN FINAL VERSION
+#del(required_data)  # KEEP THIS DATA IN FINAL VERSION
 # TODO Chart stats for original data
 
 # Create size/year chart
-year_size = pd.read_sql("SELECT FIRE_YEAR, FIRE_SIZE FROM Fires", con)  # Query
+#year_size = pd.read_sql("SELECT FIRE_YEAR, FIRE_SIZE FROM Fires", con)  # Query
 #sns.regplot(x='FIRE_YEAR', y='FIRE_SIZE', data=year_size)  # Create chart
 #plt.title('Fires/Year Sizes')
 #plt.xlabel('Years')
 #plt.ylabel('Fire sizes')
 #plt.show()
-del(year_size) # Clear memory
+#del(year_size) # Clear memory
 
 # TODO One-hot encode
 
@@ -209,8 +216,6 @@ del(year_size) # Clear memory
 # TODO Train the naive-bayes
 
 # TODO Test the naive-bayes
-
-
 
 # TODO Tensorflow softmax train
 
