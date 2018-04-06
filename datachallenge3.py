@@ -166,12 +166,14 @@ Important Columns:
 
 
 # Get required fields
-required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, FIPS_CODE FROM Fires", con)  # Query
+required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, FIPS_CODE, OWNER_DESCR FROM Fires", con)  # Query
 print(required_data.head())  # Show
 
 # TODO Clean data
 
 # Shows null counts
+#print(required_data.CONT_DATE.isnull().value_counts())
+#print(required_data.DISCOVERY_DATE.isnull().value_counts())
 #print(required_data.DISCOVERY_DOY.isnull().value_counts())
 #print(required_data.DISCOVERY_TIME.isnull().value_counts())
 #print(required_data.CONT_DOY.isnull().value_counts())
@@ -183,12 +185,16 @@ print(required_data.head())  # Show
 #print(required_data.FIPS_CODE.isnull().value_counts())
 #print(required_data.FIPS_NAME.isnull().value_counts())
 #county, fips_code, fips_name all have the same number of nulls 678148, suspect these are not rows we want
-#discovery_time, cont_doy, cont_time are all 50% nulls
+#discovery_time, cont_doy, cont_date, cont_time are all 50% nulls
 #The rest of the columns have 0 nulls
+
+#
 
 required_data['FIPS_CODE'] = required_data['FIPS_CODE'].where(required_data['FIPS_CODE'] == '40', '040')
 
 # TODO Convert dates to durations (num days)
+#
+
 
 del(required_data)  # KEEP THIS DATA IN FINAL VERSION
 # TODO Chart stats for original data
@@ -205,6 +211,9 @@ del(year_size) # Clear memory
 # TODO One-hot encode
 
 # TODO Perform train and test split
+#train = used_data.sample(frac=7)
+#test = used_data.drop(train.index)
+#w = train.copy()
 
 # TODO Train the naive-bayes
 
@@ -219,3 +228,7 @@ del(year_size) # Clear memory
 # TODO Chart train accuracy NB versus SM
 
 # TODO Chart test accuracy NB versus SM
+
+# Predicts cause of fire
+def predict():
+    pass
