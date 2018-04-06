@@ -196,6 +196,7 @@ print(required_data.CONT_DATE.isnull().value_counts())
 
 # TODO Convert dates to durations (num days)
 required_data['DUR_FIRE'] = required_data['CONT_DATE'] - required_data['DISCOVERY_DATE']
+required_data.dropna()
 print(required_data['DUR_FIRE'])
 
 #del(required_data)  # KEEP THIS DATA IN FINAL VERSION
