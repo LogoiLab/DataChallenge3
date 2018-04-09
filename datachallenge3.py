@@ -249,7 +249,7 @@ def featurizer(data_point):
         nb.Feature("FIRE_YEAR", distributions.Multinomial, data_point[0]),
 
         # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("FIRE_SIZE", distributions.Gaussian, float(data_point[1])),
+        nb.Feature("FIRE_SIZE", distributions.Multinomial, data_point[1]),
 
         # Bucketed and therefore categorical:
         nb.Feature("FIRE_SIZE_CLASS", distributions.Multinomial, data_point[2]),
@@ -267,7 +267,7 @@ def featurizer(data_point):
         nb.Feature("STAT_CAUSE_DESCR", distributions.Multinomial, data_point[6]),
 
         # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("DUR_FIRE", distributions.Gaussian, float(data_point[7]))
+        nb.Feature("DUR_FIRE", distributions.Multinomial, data_point[7])
     ]
 
 
