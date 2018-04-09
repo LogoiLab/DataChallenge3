@@ -203,6 +203,8 @@ required_data.dropna()
 required_data['DUR_FIRE'] = required_data['CONT_DATE'] - required_data['DISCOVERY_DATE']
 required_data.dropna()
 
+required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE', 'FIRE_SIZE_CLASS', 'STATE', 'COUNTY', 'FIPS_CODE', 'STAT_CAUSE_DESCR', 'DUR_FIRE']]
+
 #del(required_data)  # KEEP THIS DATA IN FINAL VERSION
 # TODO Chart stats for original data
 
@@ -219,13 +221,6 @@ required_data.dropna()
 # TODO Perform train and test split
 train = required_data.sample(frac=.7)
 test = required_data.drop(train.index)
-
-train['DISCOVERY_DATE'] = float(train['DISCOVERY_DATE'])
-test['DISCOVERY_DATE'] = float(train['DISCOVERY_DATE'])
-
-train['CONT_DATE'] = float(train['CONT_DATE'])
-train['CONT_DATE'] = float(train['CONT_DATE'])
-
 w = train.copy()
 
 # TODO Train the naive-bayes
@@ -253,44 +248,26 @@ def featurizer(data_point):
         # Bucketed and therefore categorical:
         nb.Feature("FIRE_YEAR", distributions.Multinomial, data_point[0]),
 
-        # Continuous and probably follows a power law distribution:
-        nb.Feature("DISCOVERY_DATE", distributions.Exponential, float(data_point[1])),
-
-        # Continuous and probably follows a power law distribution:
-        nb.Feature("DISCOVERY_DOY", distributions.Exponential, float(data_point[2])),
-
-        # Continuous and probably follows a power law distribution:
-        nb.Feature("DISCOVERY_TIME", distributions.Exponential, float(data_point[3])),
-
-        # Continuous and probably follows a power law distribution:
-        nb.Feature("CONT_DATE", distributions.Exponential, float(data_point[4])),
-
-        # Continuous and probably follows a power law distribution:
-        nb.Feature("CONT_DOY", distributions.Exponential, float(data_point[5])),
-
-        # Continuous and probably follows a power law distribution:
-        nb.Feature("CONT_TIME", distributions.Exponential, float(data_point[6])),
-
         # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("FIRE_SIZE", distributions.Gaussian, float(data_point[7])),
+        nb.Feature("FIRE_SIZE", distributions.Gaussian, float(data_point[1])),
 
         # Bucketed and therefore categorical:
-        nb.Feature("FIRE_SIZE_CLASS", distributions.Multinomial, data_point[8]),
+        nb.Feature("FIRE_SIZE_CLASS", distributions.Multinomial, data_point[2]),
 
         # Categorical:
-        nb.Feature("STATE", distributions.Multinomial, data_point[9]),
+        nb.Feature("STATE", distributions.Multinomial, data_point[3]),
 
         # Categorical:
-        nb.Feature("COUNTY", distributions.Multinomial, data_point[10]),
+        nb.Feature("COUNTY", distributions.Multinomial, data_point[4]),
 
         # Bucketed and therefore categorical:
-        nb.Feature("FIPS_CODE", distributions.Multinomial, data_point[11]),
+        nb.Feature("FIPS_CODE", distributions.Multinomial, data_point[5]),
 
         # Categorical:
-        nb.Feature("STAT_CAUSE_DESCR", distributions.Multinomial, data_point[12]),
+        nb.Feature("STAT_CAUSE_DESCR", distributions.Multinomial, data_point[6]),
 
         # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("DUR_FIRE", distributions.Gaussian, float(data_point[13]))
+        nb.Feature("DUR_FIRE", distributions.Gaussian, float(data_point[7]))
     ]
 
 
