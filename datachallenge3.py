@@ -276,5 +276,5 @@ def predict():
 
 
 classifier = nb.NaiveBayesClassifier(featurizer)
-classifier.train(train, train["STAT_CAUSE_DESCR"])
-print(classifier.accuracy(train, train["STAT_CAUSE_DESCR"]))
+classifier.train(train[0], train[1])
+print(classifier.accuracy(train[0], train[1]))
