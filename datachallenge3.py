@@ -5,11 +5,12 @@ import matplotlib.pyplot as plt
 import urllib
 import os.path
 import datetime
-import numpy as np
-import importlib
+import sys
 
-nb = importlib.import_module("./res/HybridNaiveBayes/nb.py")
-distributions = importlib.import_module("./res/HybridNaiveBayes/distributions.py")
+sys.path.insert(0, './res/HybridNaiveBayes/')
+import nb
+import distributions
+
 
 fname = './res/Data/FPA_FOD_20170508.sqlite'
 if os.path.isfile(fname):
@@ -18,7 +19,7 @@ else:
     print("data not found. downloading.")
     url = "https://nofile.io/g/eTXaMMnDOjWfiECxiNW4LjyR43L7o33vAhikYoD8zdkeXzagup2yHUgrKnwltS0S/FPA_FOD_20170508.sqlite/"
     urllib.request.urlretrieve(url, filename=fname)
-    print ("download complete!")
+    print("download complete!")
 
 #Establish database connection
 con = sqlite3.connect(fname)
@@ -218,6 +219,13 @@ required_data.dropna()
 # TODO Perform train and test split
 train = required_data.sample(frac=.7)
 test = required_data.drop(train.index)
+
+train['DISCOVERY_DATE'] = float(train['DISCOVERY_DATE'])
+test['DISCOVERY_DATE'] = float(train['DISCOVERY_DATE'])
+
+train['CONT_DATE'] = float(train['CONT_DATE'])
+train['CONT_DATE'] = float(train['CONT_DATE'])
+
 w = train.copy()
 
 # TODO Train the naive-bayes
@@ -287,9 +295,9 @@ def featurizer(data_point):
 
 
 def predict():
-    classifier = nb.NaiveBayesClassifier(featurizer)
-    classifier.train(train, train["STAT_CAUSE_DESCR"])
-    print "Accuracy = %s" % classifier.accuracy(train, test["STAT_CAUSE_DESCR"])
+    pass
 
 
-predict()
+classifier = nb.NaiveBayesClassifier(featurizer)
+classifier.train(train, train["STAT_CAUSE_DESCR"])
+print(classifier.accuracy(train, train["STAT_CAUSE_DESCR"]))

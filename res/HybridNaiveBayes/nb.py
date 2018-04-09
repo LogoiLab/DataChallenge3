@@ -83,7 +83,7 @@ class NaiveBayesClassifier(object):
                         distribution = distributions.Binary(trueCount, falseCount)
                     else:
                         distribution = distributionTypes[featureName].mleEstimate(values)
-                except distributions.EstimationError, distributions.ParametrizationError:
+                except distributions.EstimationError:
                     if issubclass(distributionTypes[featureName], distributions.Binary):
                         distribution = distributions.Binary(0, labelCounts[label])
                     elif issubclass(distributionTypes[featureName], distributions.DiscreteDistribution):
