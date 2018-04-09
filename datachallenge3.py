@@ -173,7 +173,7 @@ Important Columns:
 
 # Get required fields
 #required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, FIPS_CODE, OWNER_DESCR FROM Fires", con)  # Query
-required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, FIPS_NAME, STAT_CAUSE_DESCR FROM Fires", con)  # Query
+required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, STAT_CAUSE_DESCR FROM Fires", con)  # Query
 required_data.dropna()
 #print(required_data.head())  # Show
 
@@ -243,64 +243,46 @@ probs["Fireworks"] = sum(w['STAT_CAUSE_DESCR'] == 'Fireworks') / w_len
 def featurizer(data_point):
     return [
         # Bucketed and therefore categorical:
-        nb.Feature("Checking account status", distributions.Multinomial, data_point[0]),
+        nb.Feature("FIRE_YEAR", distributions.Multinomial, data_point[0]),
 
         # Continuous and probably follows a power law distribution:
-        nb.Feature("Duration in months", distributions.Exponential, float(data_point[1])),
+        nb.Feature("DISCOVERY_DATE", distributions.Exponential, float(data_point[1])),
 
-        # Categorical:
-        nb.Feature("Credit history", distributions.Multinomial, data_point[2]),
+        # Continuous and probably follows a power law distribution:
+        nb.Feature("DISCOVERY_DOY", distributions.Exponential, float(data_point[2])),
 
-        # Categorical:
-        nb.Feature("Purpose", distributions.Multinomial, data_point[3]),
+        # Continuous and probably follows a power law distribution:
+        nb.Feature("DISCOVERY_TIME", distributions.Exponential, float(data_point[3])),
+
+        # Continuous and probably follows a power law distribution:
+        nb.Feature("CONT_DATE", distributions.Exponential, float(data_point[4])),
+
+        # Continuous and probably follows a power law distribution:
+        nb.Feature("CONT_DOY", distributions.Exponential, float(data_point[5])),
+
+        # Continuous and probably follows a power law distribution:
+        nb.Feature("CONT_TIME", distributions.Exponential, float(data_point[6])),
 
         # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("Credit amount", distributions.Gaussian, float(data_point[4])),
+        nb.Feature("FIRE_SIZE", distributions.Gaussian, float(data_point[7])),
 
         # Bucketed and therefore categorical:
-        nb.Feature("Savings account status", distributions.Multinomial, data_point[5]),
+        nb.Feature("FIRE_SIZE_CLASS", distributions.Multinomial, data_point[8]),
+
+        # Categorical:
+        nb.Feature("STATE", distributions.Multinomial, data_point[9]),
+
+        # Categorical:
+        nb.Feature("COUNTY", distributions.Multinomial, data_point[10]),
 
         # Bucketed and therefore categorical:
-        nb.Feature("Unemployment duration", distributions.Multinomial, data_point[6]),
+        nb.Feature("FIPS_CODE", distributions.Multinomial, data_point[11]),
+
+        # Categorical:
+        nb.Feature("STAT_CAUSE_DESCR", distributions.Multinomial, data_point[12]),
 
         # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("Installment rate", distributions.Gaussian, float(data_point[7])),
-
-        # Categorical:
-        nb.Feature("Personal status", distributions.Multinomial, data_point[8]),
-
-        # Categorical:
-        nb.Feature("Other debtors", distributions.Multinomial, data_point[9]),
-
-        # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("Present residence", distributions.Exponential, float(data_point[10])),
-
-        # Categorical:
-        nb.Feature("Property status", distributions.Multinomial, data_point[11]),
-
-        # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("Age", distributions.Gaussian, float(data_point[12])),
-
-        # Categorical:
-        nb.Feature("Other installment plans", distributions.Multinomial, data_point[13]),
-
-        # Categorical:
-        nb.Feature("Housing", distributions.Multinomial, data_point[14]),
-
-        # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("Number of credit cards", distributions.Exponential, float(data_point[15])),
-
-        # Categorical:
-        nb.Feature("Job", distributions.Multinomial, data_point[16]),
-
-        # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("Number of people liable", distributions.Exponential, float(data_point[17])),
-
-        # Categorical:
-        nb.Feature("Telephone", distributions.Multinomial, data_point[18]),
-
-        # Categorical:
-        nb.Feature("Foreign worker", distributions.Multinomial, data_point[19])
+        nb.Feature("DUR_FIRE", distributions.Gaussian, float(data_point[13]))
     ]
 
 
