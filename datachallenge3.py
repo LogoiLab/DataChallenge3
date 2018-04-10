@@ -2,10 +2,15 @@ import pandas as pd
 import sqlite3
 import seaborn as sns
 import matplotlib.pyplot as plt
-import tensorflow as tf
 import urllib
 import os.path
 import datetime
+import sys
+
+sys.path.insert(0, './res/HybridNaiveBayes/')
+import nb
+import distributions
+
 
 # Automatically inserts values for all present responses in the feature Series
 #   into the dicToFill dictionary with the syntax "response|answer"
@@ -34,7 +39,7 @@ else:
     print("data not found. downloading.")
     url = "https://nofile.io/g/eTXaMMnDOjWfiECxiNW4LjyR43L7o33vAhikYoD8zdkeXzagup2yHUgrKnwltS0S/FPA_FOD_20170508.sqlite/"
     urllib.request.urlretrieve(url, filename=fname)
-    print ("download complete!")
+    print("download complete!")
 
 #Establish database connection
 con = sqlite3.connect(fname)
@@ -189,14 +194,14 @@ Important Columns:
 
 # Get required fields
 #required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, FIPS_CODE, OWNER_DESCR FROM Fires", con)  # Query
-required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, FIPS_NAME FROM Fires", con)  # Query
+required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, STAT_CAUSE_DESCR FROM Fires", con)  # Query
 required_data.dropna()
 #print(required_data.head())  # Show
 
 # TODO Clean data
 
 # Shows null counts
-print(required_data.CONT_DATE.isnull().value_counts())
+#print(required_data.CONT_DATE.isnull().value_counts())
 #print(required_data.DISCOVERY_DATE.isnull().value_counts())
 #print(required_data.DISCOVERY_DOY.isnull().value_counts())
 #print(required_data.DISCOVERY_TIME.isnull().value_counts())
@@ -217,38 +222,79 @@ print(required_data.CONT_DATE.isnull().value_counts())
 # TODO Convert dates to durations (num days)
 required_data['DUR_FIRE'] = required_data['CONT_DATE'] - required_data['DISCOVERY_DATE']
 required_data.dropna()
-print(required_data['DUR_FIRE'])
+
+required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE', 'FIRE_SIZE_CLASS', 'STATE', 'COUNTY', 'FIPS_CODE', 'STAT_CAUSE_DESCR', 'DUR_FIRE']]
 
 #del(required_data)  # KEEP THIS DATA IN FINAL VERSION
 # TODO Chart stats for original data
 
 # Create size/year chart
-sns.regplot(x='DUR_FIRE', y='FIRE_SIZE', data=required_data)  # Create chart
-plt.title('Fires Sizes / Duration')
-plt.xlabel('Duration')
-plt.ylabel('Fire sizes')
-plt.show()
+#sns.regplot(x='DUR_FIRE', y='FIRE_SIZE', data=required_data)  # Create chart
+#plt.title('Fires Sizes / Duration')
+#plt.xlabel('Duration')
+#plt.ylabel('Fire sizes')
+#plt.show()
 #del(year_size) # Clear memory
 
 # TODO One-hot encode
 
 # TODO Perform train and test split
-#train = used_data.sample(frac=7)
-#test = used_data.drop(train.index)
-#w = train.copy()
+train = required_data.sample(frac=.7)
+test = required_data.drop(train.index)
+w = train.copy()
 
 # TODO Train the naive-bayes
-
+probs = {}
+w_len = len(w)
+probs["Structure"] = sum(w['STAT_CAUSE_DESCR'] == 'Structure') / w_len
+probs["Smoking"] = sum(w['STAT_CAUSE_DESCR'] == 'Smoking') / w_len
+probs["Powerline"] = sum(w['STAT_CAUSE_DESCR'] == 'Powerline') / w_len
+probs["Misc"] = sum(w['STAT_CAUSE_DESCR'] == 'Miscellaneous') / w_len
+probs["NA"] = sum(w['STAT_CAUSE_DESCR'] == 'Missing/Undefined') / w_len
+probs["Lightening"] = sum(w['STAT_CAUSE_DESCR'] == 'Lightening') / w_len
+probs["Misc"] = sum(w['STAT_CAUSE_DESCR'] == 'Miscellaneous') / w_len
+probs["Debris_Burning"] = sum(w['STAT_CAUSE_DESCR'] == 'Debris Burning') / w_len
+probs["Campfire"] = sum(w['STAT_CAUSE_DESCR'] == 'Campfire') / w_len
+probs["Equipment_Use"] = sum(w['STAT_CAUSE_DESCR'] == 'Equipment Use') / w_len
+probs["Arson"] = sum(w['STAT_CAUSE_DESCR'] == 'Arson') / w_len
+probs["Children"] = sum(w['STAT_CAUSE_DESCR'] == 'Children') / w_len
+probs["Railroad"] = sum(w['STAT_CAUSE_DESCR'] == 'Railroad') / w_len
+probs["Fireworks"] = sum(w['STAT_CAUSE_DESCR'] == 'Fireworks') / w_len
 # TODO Test the naive-bayes
 
-# TODO Tensorflow softmax train
 
-# TODO Tensorflow softmax test
+def featurizer(data_point):
+    return [
+        # Bucketed and therefore categorical:
+        nb.Feature("FIRE_YEAR", distributions.Multinomial, data_point[0]),
 
-# TODO Chart train accuracy NB versus SM
+        # Continuous and probably conforms to an approximate power law distribution:
+        nb.Feature("FIRE_SIZE", distributions.Multinomial, data_point[1]),
 
-# TODO Chart test accuracy NB versus SM
+        # Bucketed and therefore categorical:
+        nb.Feature("FIRE_SIZE_CLASS", distributions.Multinomial, data_point[2]),
 
-# Predicts cause of fire
+        # Categorical:
+        nb.Feature("STATE", distributions.Multinomial, data_point[3]),
+
+        # Categorical:
+        nb.Feature("COUNTY", distributions.Multinomial, data_point[4]),
+
+        # Bucketed and therefore categorical:
+        nb.Feature("FIPS_CODE", distributions.Multinomial, data_point[5]),
+
+        # Categorical:
+        nb.Feature("STAT_CAUSE_DESCR", distributions.Multinomial, data_point[6]),
+
+        # Continuous and probably conforms to an approximate power law distribution:
+        nb.Feature("DUR_FIRE", distributions.Multinomial, data_point[7])
+    ]
+
+
 def predict():
     pass
+
+
+classifier = nb.NaiveBayesClassifier(featurizer)
+classifier.train(train, train["STAT_CAUSE_DESCR"])
+print(classifier.accuracy(test, test["STAT_CAUSE_DESCR"]))
