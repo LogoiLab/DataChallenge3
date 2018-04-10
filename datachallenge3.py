@@ -7,10 +7,6 @@ import os.path
 import datetime
 import sys
 
-sys.path.insert(0, './res/HybridNaiveBayes/')
-import nb
-import distributions
-
 
 # Automatically inserts values for all present responses in the feature Series
 #   into the dicToFill dictionary with the syntax "response|answer"
@@ -223,7 +219,7 @@ required_data.dropna()
 required_data['DUR_FIRE'] = required_data['CONT_DATE'] - required_data['DISCOVERY_DATE']
 required_data.dropna()
 
-required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE', 'FIRE_SIZE_CLASS', 'STATE', 'COUNTY', 'FIPS_CODE', 'STAT_CAUSE_DESCR', 'DUR_FIRE']]
+required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'FIPS_CODE', 'DUR_FIRE', 'STAT_CAUSE_DESCR']]
 
 #del(required_data)  # KEEP THIS DATA IN FINAL VERSION
 # TODO Chart stats for original data
@@ -236,6 +232,8 @@ required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE', 'FIRE_SIZE_CLASS', 'STA
 #plt.show()
 #del(year_size) # Clear memory
 
+#required_data.boxplot(column="")
+
 # TODO One-hot encode
 
 # TODO Perform train and test split
@@ -244,57 +242,59 @@ test = required_data.drop(train.index)
 w = train.copy()
 
 # TODO Train the naive-bayes
-probs = {}
-w_len = len(w)
-probs["Structure"] = sum(w['STAT_CAUSE_DESCR'] == 'Structure') / w_len
-probs["Smoking"] = sum(w['STAT_CAUSE_DESCR'] == 'Smoking') / w_len
-probs["Powerline"] = sum(w['STAT_CAUSE_DESCR'] == 'Powerline') / w_len
-probs["Misc"] = sum(w['STAT_CAUSE_DESCR'] == 'Miscellaneous') / w_len
-probs["NA"] = sum(w['STAT_CAUSE_DESCR'] == 'Missing/Undefined') / w_len
-probs["Lightening"] = sum(w['STAT_CAUSE_DESCR'] == 'Lightening') / w_len
-probs["Misc"] = sum(w['STAT_CAUSE_DESCR'] == 'Miscellaneous') / w_len
-probs["Debris_Burning"] = sum(w['STAT_CAUSE_DESCR'] == 'Debris Burning') / w_len
-probs["Campfire"] = sum(w['STAT_CAUSE_DESCR'] == 'Campfire') / w_len
-probs["Equipment_Use"] = sum(w['STAT_CAUSE_DESCR'] == 'Equipment Use') / w_len
-probs["Arson"] = sum(w['STAT_CAUSE_DESCR'] == 'Arson') / w_len
-probs["Children"] = sum(w['STAT_CAUSE_DESCR'] == 'Children') / w_len
-probs["Railroad"] = sum(w['STAT_CAUSE_DESCR'] == 'Railroad') / w_len
-probs["Fireworks"] = sum(w['STAT_CAUSE_DESCR'] == 'Fireworks') / w_len
+
+#probs = {}
+#w_len = len(w)
+#probs["Structure"] = sum(w['STAT_CAUSE_DESCR'] == 'Structure') / w_len
+#probs["Smoking"] = sum(w['STAT_CAUSE_DESCR'] == 'Smoking') / w_len
+#probs["Powerline"] = sum(w['STAT_CAUSE_DESCR'] == 'Powerline') / w_len
+#probs["Misc"] = sum(w['STAT_CAUSE_DESCR'] == 'Miscellaneous') / w_len
+#probs["NA`"] = sum(w['STAT_CAUSE_DESCR'] == 'Missing/Undefined') / w_len
+#probs["Lightening"] = sum(w['STAT_CAUSE_DESCR'] == 'Lightening') / w_len
+#probs["Debris_Burning"] = sum(w['STAT_CAUSE_DESCR'] == 'Debris Burning') / w_len
+#probs["Campfire"] = sum(w['STAT_CAUSE_DESCR'] == 'Campfire') / w_len
+#probs["Equipment_Use"] = sum(w['STAT_CAUSE_DESCR'] == 'Equipment Use') / w_len
+#probs["Arson"] = sum(w['STAT_CAUSE_DESCR'] == 'Arson') / w_len
+#probs["Children"] = sum(w['STAT_CAUSE_DESCR'] == 'Children') / w_len
+#probs["Railroad"] = sum(w['STAT_CAUSE_DESCR'] == 'Railroad') / w_len
+#probs["Fireworks"] = sum(w['STAT_CAUSE_DESCR'] == 'Fireworks') / w_len
+
 # TODO Test the naive-bayes
 
-
-def featurizer(data_point):
-    return [
-        # Bucketed and therefore categorical:
-        nb.Feature("FIRE_YEAR", distributions.Multinomial, data_point[0]),
-
-        # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("FIRE_SIZE", distributions.Multinomial, data_point[1]),
-
-        # Bucketed and therefore categorical:
-        nb.Feature("FIRE_SIZE_CLASS", distributions.Multinomial, data_point[2]),
-
-        # Categorical:
-        nb.Feature("STATE", distributions.Multinomial, data_point[3]),
-
-        # Categorical:
-        nb.Feature("COUNTY", distributions.Multinomial, data_point[4]),
-
-        # Bucketed and therefore categorical:
-        nb.Feature("FIPS_CODE", distributions.Multinomial, data_point[5]),
-
-        # Categorical:
-        nb.Feature("STAT_CAUSE_DESCR", distributions.Multinomial, data_point[6]),
-
-        # Continuous and probably conforms to an approximate power law distribution:
-        nb.Feature("DUR_FIRE", distributions.Multinomial, data_point[7])
-    ]
+#
+#
+#def featurizer(data_point):
+#    return [
+#        # Bucketed and therefore categorical:
+#        nb.Feature("FIRE_YEAR", distributions.Multinomial, data_point[0]),
+#
+#        # Continuous and probably conforms to an approximate power law distribution:
+#        nb.Feature("FIRE_SIZE", distributions.Multinomial, data_point[1]),
+#
+#        # Bucketed and therefore categorical:
+#        nb.Feature("FIRE_SIZE_CLASS", distributions.Multinomial, data_point[2]),
+#
+#        # Categorical:
+#        nb.Feature("STATE", distributions.Multinomial, data_point[3]),
+#
+#        # Categorical:
+#        nb.Feature("COUNTY", distributions.Multinomial, data_point[4]),
+#
+#        # Bucketed and therefore categorical:
+#        nb.Feature("FIPS_CODE", distributions.Multinomial, data_point[5]),
+#
+#        # Categorical:
+#        nb.Feature("STAT_CAUSE_DESCR", distributions.Multinomial, data_point[6]),
+#
+#        # Continuous and probably conforms to an approximate power law distribution:
+#        nb.Feature("DUR_FIRE", distributions.Multinomial, data_point[7])
+#    ]
 
 
 def predict():
     pass
 
 
-classifier = nb.NaiveBayesClassifier(featurizer)
-classifier.train(train, train["STAT_CAUSE_DESCR"])
-print(classifier.accuracy(test, test["STAT_CAUSE_DESCR"]))
+#classifier = nb.NaiveBayesClassifier(featurizer)
+#classifier.train(train, train["STAT_CAUSE_DESCR"])
+#print(classifier.accuracy(test, test["STAT_CAUSE_DESCR"]))
