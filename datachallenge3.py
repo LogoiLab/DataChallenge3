@@ -1,11 +1,11 @@
 import pandas as pd
 import sqlite3
-import seaborn as sns
-import matplotlib.pyplot as plt
+# import seaborn as sns
+# import matplotlib.pyplot as plt
 import urllib
 import os.path
-import datetime
-import sys
+# import datetime
+# import sys
 
 
 # Automatically inserts values for all present responses in the feature Series
@@ -51,142 +51,15 @@ con = sqlite3.connect(fname)
 #print(distinct_vals)  # Show
 #del(distinct_vals)  # Clear memory
 
-
-"""
-format:
-COLUMN WORTH
-    COLUMN TYPE
-        COLUMN NAME
-            UNIQUE VALUES
-
-Important Columns:
-    Data:
-        SOURCE_SYSTEM_TYPE
-            FED
-            NONFED
-            INTERAGCY
-        SOURCE_SYSTEM
-            FS-FIRESTAT
-            DOI-WFMI
-            FWS-FMIS
-            FA-NFIRS
-            ST-NASF
-            ST-AZAZS
-            ST-MOMOS
-            IA-AKACC
-            ST-MTMTS
-            ST-SCSCS
-            ST-COCOS
-            ST-MEMES
-            ST-ORORS
-            ST-MSMSS
-            ST-NMNMS
-            ST-SDSDS
-            ST-UTUTS
-            ST-WAWAS
-            ST-WYWYS
-            ST-OKOKS
-            ST-WIWIS
-            ST-MIMIS
-            ST-KYKYS
-            ST-ALALS
-            ST-ARARS
-            ST-GAGAS
-            ST-LALAS
-            ST-TNTNS
-            ST-VAVAS
-            ST-FLFLS
-            ST-NCNCS
-            IA-ICS209
-            ST-CACDF
-            ST-CTCTS
-            ST-NENES
-            ST-TXTXS
-            IA-PRIITF
-            IA-HIWMO
-        NWCG_REPORTING_AGENCY
-            FS
-            BIA
-            TRIBE
-            BLM
-            NPS
-            BOR
-            FWS
-            ST/C&L
-            DOD
-            IA
-            DOE
-        NWCG_REPORTING_UNIT_NAME
-            County Names
-            University Names
-            Firehouse Names
-        FIRE_YEAR
-            Years 1980?-2017
-        DISCOVERY_DATE
-            Date 1980?-2017
-        DISCOVERY_DOY
-            Date 1980?-2017
-        DISCOVERY_TIME
-            Timevalue
-        CONT_DATE
-            Date 1980?-2017
-        CONT_DOY
-            Date 1980?-2017
-        CONT_TIME
-            Timevalue
-        FIRE_SIZE
-            FLOAT
-        FIRE_SIZE_CLASS
-            A-E
-        LATITUDE
-            Latitude Coordinate Decimal Degrees
-        LONGITUDE
-            Longitude Coordinate Decimal Degrees
-        STATE
-            1 of 50 US States
-        COUNTY
-            County Names
-        FIPS_CODE
-            A FIPS Code
-        FIPS_NAME
-            A FIPS Name
-
-    Answers:
-        STAT_CAUSE_CODE
-            Integer Index
-        STAT_CAUSE_DESCR
-            Answer
-"""
-
-# Get all the important columns
-#important = pd.read_sql("SELECT SOURCE_SYSTEM_TYPE, SOURCE_SYSTEM, NWCG_REPORTING_AGENCY, NWCG_REPORTING_UNIT_NAME, FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, LATITUDE, LONGITUDE, STATE, COUNTY, FIPS_CODE, FIPS_NAME FROM Fires", con)  # Query
-#print(important.head())  # Show
-#del(important)  # Clear memory
-
-
 # Get the answers
 #answers = pd.read_sql("SELECT STAT_CAUSE_CODE, STAT_CAUSE_DESCR FROM Fires", con)  # Query
 #print(answers.head())  # Show
 #del(answers)  # Clear memory
 
-
-# Get the location info
-#location_data = pd.read_sql("SELECT LATITUDE, LONGITUDE, STATE, COUNTY, FIPS_CODE, FIPS_NAME FROM Fires", con)  # Query
-#print(location_data.head())  # Show
-#del(location_data)  # Clear memory
-
-
 # Get the fire info
 #fire_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS FROM Fires", con)  # Query
 #print(fire_data.head())  # Show
 #del(fire_data)  # Clear memory
-
-
-# Get the reporting info
-#report_data = pd.read_sql("SELECT SOURCE_SYSTEM_TYPE, SOURCE_SYSTEM, NWCG_REPORTING_AGENCY, NWCG_REPORTING_UNIT_NAME FROM Fires", con)  # Query
-#print(report_data.head())  # Show
-#del(report_data)  # Clear memory
-
 
 # Get required fields
 #required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, FIPS_CODE, OWNER_DESCR FROM Fires", con)  # Query
@@ -194,28 +67,8 @@ required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DI
 required_data.dropna()
 #print(required_data.head())  # Show
 
-# TODO Clean data
 
-# Shows null counts
-#print(required_data.CONT_DATE.isnull().value_counts())
-#print(required_data.DISCOVERY_DATE.isnull().value_counts())
-#print(required_data.DISCOVERY_DOY.isnull().value_counts())
-#print(required_data.DISCOVERY_TIME.isnull().value_counts())
-#print(required_data.CONT_DOY.isnull().value_counts())
-#print(required_data.CONT_TIME.isnull().value_counts())
-#print(required_data.FIRE_SIZE.isnull().value_counts())
-#print(required_data.FIRE_SIZE_CLASS.isnull().value_counts())
-#print(required_data.STATE.isnull().value_counts())
-#print(required_data.COUNTY.isnull().value_counts())
-#print(required_data.FIPS_CODE.isnull().value_counts())
-#print(required_data.FIPS_NAME.isnull().value_counts())
-#county, fips_code, fips_name all have the same number of nulls 678148, suspect these are not rows we want
-#discovery_time, cont_doy, cont_date, cont_time are all 50% nulls
-#The rest of the columns have 0 nulls
-
-#required_data['FIPS_CODE'] = required_data['FIPS_CODE'].where(required_data['FIPS_CODE'] == '40', '040')
-
-# TODO Convert dates to durations (num days)
+# DONE Create durations.
 required_data['DUR_FIRE'] = required_data['CONT_DATE'] - required_data['DISCOVERY_DATE']
 required_data.dropna()
 
@@ -232,9 +85,9 @@ required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'FIPS_CO
 #plt.show()
 #del(year_size) # Clear memory
 
-required_data.boxplot(column="DUR_FIRE")
-
 # TODO One-hot encode
+
+required_data_1h = pd.get_dummies(required_data)
 
 # TODO Perform train and test split
 train = required_data.sample(frac=.7)
@@ -244,7 +97,7 @@ w = train.copy()
 # TODO Train the naive-bayes
 
 probs = {}
-buildColPredictor(required_data, probs)
+buildDFPredictor(required_data, probs)
 #w_len = len(w)
 #probs["Structure"] = sum(w['STAT_CAUSE_DESCR'] == 'Structure') / w_len
 #probs["Smoking"] = sum(w['STAT_CAUSE_DESCR'] == 'Smoking') / w_len
@@ -262,40 +115,6 @@ buildColPredictor(required_data, probs)
 
 # TODO Test the naive-bayes
 
-#
-#
-#def featurizer(data_point):
-#    return [
-#        # Bucketed and therefore categorical:
-#        nb.Feature("FIRE_YEAR", distributions.Multinomial, data_point[0]),
-#
-#        # Continuous and probably conforms to an approximate power law distribution:
-#        nb.Feature("FIRE_SIZE", distributions.Multinomial, data_point[1]),
-#
-#        # Bucketed and therefore categorical:
-#        nb.Feature("FIRE_SIZE_CLASS", distributions.Multinomial, data_point[2]),
-#
-#        # Categorical:
-#        nb.Feature("STATE", distributions.Multinomial, data_point[3]),
-#
-#        # Categorical:
-#        nb.Feature("COUNTY", distributions.Multinomial, data_point[4]),
-#
-#        # Bucketed and therefore categorical:
-#        nb.Feature("FIPS_CODE", distributions.Multinomial, data_point[5]),
-#
-#        # Categorical:
-#        nb.Feature("STAT_CAUSE_DESCR", distributions.Multinomial, data_point[6]),
-#
-#        # Continuous and probably conforms to an approximate power law distribution:
-#        nb.Feature("DUR_FIRE", distributions.Multinomial, data_point[7])
-#    ]
-
 
 def predict():
     pass
-
-
-#classifier = nb.NaiveBayesClassifier(featurizer)
-#classifier.train(train, train["STAT_CAUSE_DESCR"])
-#print(classifier.accuracy(test, test["STAT_CAUSE_DESCR"]))
