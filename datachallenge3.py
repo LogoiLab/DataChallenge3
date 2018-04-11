@@ -4,6 +4,7 @@ import sqlite3
 # import matplotlib.pyplot as plt
 import urllib
 import os.path
+from sklearn.naive_bayes import GaussianNB
 # import datetime
 # import sys
 
@@ -89,15 +90,17 @@ required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'FIPS_CO
 
 required_data_1h = pd.get_dummies(required_data)
 
+print(required_data_1h.head())
+
 # TODO Perform train and test split
-train = required_data.sample(frac=.7)
-test = required_data.drop(train.index)
+train = required_data_1h.sample(frac=.7)
+test = required_data_1h.drop(train.index)
 w = train.copy()
 
 # TODO Train the naive-bayes
 
 probs = {}
-buildDFPredictor(required_data, probs)
+#buildDFPredictor(required_data, probs)
 #w_len = len(w)
 #probs["Structure"] = sum(w['STAT_CAUSE_DESCR'] == 'Structure') / w_len
 #probs["Smoking"] = sum(w['STAT_CAUSE_DESCR'] == 'Smoking') / w_len
@@ -116,5 +119,9 @@ buildDFPredictor(required_data, probs)
 # TODO Test the naive-bayes
 
 
-def predict():
-    pass
+def predict(values):
+    print(clf.predict(values))
+
+clf = GaussianNB()
+clf.fit(train.sample(frac=.3).as_matrix(), test.sample(frac=.3).as_matrix())
+predict(w.sample(frac=.1).as_matrix())
