@@ -9,23 +9,23 @@ import sys
 
 
 # Automatically inserts values for all present responses in the feature Series
-#   into the dicToFill dictionary with the syntax "response|answer"
+#   into the dicToFill dictionary with the syntax "response|category" along with
+#   all the present categories with the syntax "category"
 # @param df DataFrame containing all features and corresponding answers, answers
 #   must be in the last column, which need bayesian probabilities made for them
 #   This DataFrame cannot contain nulls or nans
 # @param dicToFill Dictionary to contain all feature response/category combinations
-#   with their corresponding probabilities WHICH MUST ALREADY CONTAIN THE
-#   PROBABILITIES OF THE PRIORS IN THEIR APPROPRIATE DICTIONARY KEYS
+#   with their corresponding probabilities, including the prior probabilities
 def buildColPredictor(df, dicToFill):
-    categories = df[len(df.columns) - 1].unique()
+    categories = df[df.columns[len(df.columns) - 1]].unique()
     for category in categories:
-        dicToFill[category] = (len(df[df[len(df.columns)-1] == category]) / (len(df[len(df.columns)-1])))
+        dicToFill[category] = (len(df[df[df.columns[len(df.columns)-1]] == category]) / (len(df[df.columns[len(df.columns)-1]])))
     for j in range(len(df.columns) - 1):
-        response_counts = df[j].value_counts()
+        response_counts = df[df.columns[j]].value_counts()
         responses = response_counts.index
         for i,response in enumerate(responses):
             for category in categories:
-                dicToFill[response+"|"+category] = len(df[(df[j] == response) & (df[len(df.columns) - 1] == category)]) / int(response_counts[i])
+                dicToFill[str(response)+"|"+str(category)] = len(df[(df[df.columns[j]] == response) & (df[df.columns[len(df.columns) - 1]] == category)]) / int(response_counts.iloc[i])
 
 
 fname = './res/Data/FPA_FOD_20170508.sqlite'
@@ -232,7 +232,7 @@ required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'FIPS_CO
 #plt.show()
 #del(year_size) # Clear memory
 
-#required_data.boxplot(column="")
+required_data.boxplot(column="DUR_FIRE")
 
 # TODO One-hot encode
 
@@ -243,7 +243,8 @@ w = train.copy()
 
 # TODO Train the naive-bayes
 
-#probs = {}
+probs = {}
+buildColPredictor(required_data, probs)
 #w_len = len(w)
 #probs["Structure"] = sum(w['STAT_CAUSE_DESCR'] == 'Structure') / w_len
 #probs["Smoking"] = sum(w['STAT_CAUSE_DESCR'] == 'Smoking') / w_len
