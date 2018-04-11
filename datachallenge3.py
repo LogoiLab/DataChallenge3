@@ -16,7 +16,7 @@ import sys
 #   This DataFrame cannot contain nulls or nans
 # @param dicToFill Dictionary to contain all feature response/category combinations
 #   with their corresponding probabilities, including the prior probabilities
-def buildColPredictor(df, dicToFill):
+def buildDFPredictor(df, dicToFill):
     categories = df[df.columns[len(df.columns) - 1]].unique()
     for category in categories:
         dicToFill[category] = (len(df[df[df.columns[len(df.columns)-1]] == category]) / (len(df[df.columns[len(df.columns)-1]])))
