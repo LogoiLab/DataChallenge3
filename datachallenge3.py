@@ -3,6 +3,8 @@ import sqlite3
 import urllib
 import os.path
 from sklearn.naive_bayes import GaussianNB
+from sklearn.cross_validation import train_test_split
+from sklearn.metrics import accuracy_score
 
 # Automatically inserts values for all present responses in the feature Series
 #   into the dicToFill dictionary with the syntax "response|category" along with
@@ -49,22 +51,25 @@ required_data.dropna()
 required_data['DUR_FIRE'] = required_data['CONT_DATE'] - required_data['DISCOVERY_DATE']
 required_data.dropna()
 
-required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'FIPS_CODE', 'DUR_FIRE', 'STAT_CAUSE_DESCR']]
+required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'DUR_FIRE', 'STAT_CAUSE_DESCR']]
 
 # DONE One-hot encode
-required_data_1h = pd.get_dummies(required_data)
+required_data_1h = pd.get_dummies(required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'DUR_FIRE']])
 
 # DONE Perform train and test split
-train = required_data_1h.sample(frac=.7)
-test = required_data_1h.drop(train.index)
-w = train.copy()
+features_train, features_test, target_train, target_test = train_test_split(required_data_1h, required_data["STAT_CAUSE_DESCR"], test_size=.3, random_state=100)
+
+
+
+
 
 # TODO Train the naive-bayes
 
 # TODO Test the naive-bayes
 def predict(values):
-    print(clf.predict(values))
+    return clf.predict(values)
 
 clf = GaussianNB()
-clf.fit(train.sample(frac=.3).as_matrix(), test.sample(frac=.3).as_matrix())
-predict(w.sample(frac=.1).as_matrix())
+clf.fit(features_train, target_train)
+target_pred = predict(features_test)
+print(sum(target_pred == target_test) / len(features_test))
