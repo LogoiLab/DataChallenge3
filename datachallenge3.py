@@ -44,7 +44,7 @@ con = sqlite3.connect(fname)
 #del(answers)  # Clear memory
 
 # Get required fields
-required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, STAT_CAUSE_DESCR FROM Fires", con)  # Query
+required_data = pd.read_sql("SELECT FIRE_YEAR, DISCOVERY_DATE, DISCOVERY_DOY, DISCOVERY_TIME, CONT_DATE, CONT_DOY, CONT_TIME, FIRE_SIZE, FIRE_SIZE_CLASS, STATE, COUNTY, FIPS_CODE, STAT_CAUSE_DESCR FROM Fires limit 1000", con)  # Query
 required_data.dropna()
 
 # DONE Create durations.
@@ -53,23 +53,33 @@ required_data.dropna()
 
 required_data = required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'DUR_FIRE', 'STAT_CAUSE_DESCR']]
 
+required_data['FIRE_YEAR'] = required_data['FIRE_YEAR'] - 1992
+
 # DONE One-hot encode
 required_data_1h = pd.get_dummies(required_data[['FIRE_YEAR', 'FIRE_SIZE_CLASS', 'STATE', 'DUR_FIRE']])
 
 # DONE Perform train and test split
+
 features_train, features_test, target_train, target_test = train_test_split(required_data_1h, required_data["STAT_CAUSE_DESCR"], test_size=.3, random_state=100)
 
-
-
-
-
-# TODO Train the naive-bayes
-
-# TODO Test the naive-bayes
-def predict(values):
-    return clf.predict(values)
-
+# DONE Train the naive-bayes
 clf = GaussianNB()
 clf.fit(features_train, target_train)
-target_pred = predict(features_test)
-print(sum(target_pred == target_test) / len(features_test))
+
+# DONE Test the naive-bayes
+target_pred = clf.predict(features_test)
+print("Testing dataset: ", str(sum(target_pred == target_test) / len(features_test)), "confidence." )
+
+def predict(fire_year, fire_size_class, state, dur_fire):
+    value = pd.DataFrame()
+    value['FIRE_YEAR'] = fire_year
+    value['FIRE_SIZE_CLASS'] = fire_size_class
+    value['STATE'] = state
+    value['DUR_FIRE'] = dur_fire
+    value = pd.get_dummies(value)
+    return(clf.predict_proba(value.as_matrix()))
+
+
+
+
+
